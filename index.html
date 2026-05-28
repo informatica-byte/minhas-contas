@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Contas 2026 - Nuvem</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -31,11 +31,12 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 14px;
     min-height: 100vh;
+    -webkit-tap-highlight-color: transparent;
   }
   header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 0 28px;
+    padding: 0 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -46,93 +47,161 @@
   }
   .logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--accent); letter-spacing: 0.5px; }
   .logo span { color: var(--text2); font-size: 13px; font-family: 'DM Sans', sans-serif; margin-left: 8px; }
-  .header-right { display: flex; gap: 10px; align-items: center; }
+  .header-right { display: flex; gap: 8px; align-items: center; }
+  
   .btn {
-    padding: 8px 16px; border-radius: var(--radius2); border: 1px solid var(--border2);
+    padding: 10px 16px; border-radius: var(--radius2); border: 1px solid var(--border2);
     background: var(--surface2); color: var(--text); font-family: 'DM Sans', sans-serif;
     font-size: 13px; cursor: pointer; transition: all 0.18s; display: flex; align-items: center; gap: 6px;
+    font-weight: 500;
   }
   .btn:hover { background: var(--border); border-color: var(--accent); color: var(--accent); }
   .btn-accent { background: var(--accent); color: #111; border-color: var(--accent); font-weight: 600; }
   .btn-accent:hover { background: var(--accent2); color: #111; }
+  
   .app { display: flex; height: calc(100vh - 64px); }
-  aside { width: 200px; min-width: 200px; background: var(--surface); border-right: 1px solid var(--border); padding: 16px 0; overflow-y: auto; }
+  
+  aside { width: 220px; min-width: 220px; background: var(--surface); border-right: 1px solid var(--border); padding: 16px 0; overflow-y: auto; display: flex; flex-direction: column; }
   .aside-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); padding: 4px 20px 8px; margin-top: 8px; }
-  .month-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 20px; background: none; border: none; color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.15s; text-align: left; }
+  .sidebar-menu { display: flex; flex-direction: column; width: 100%; }
+  
+  .month-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 12px 20px; background: none; border: none; color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.15s; text-align: left; }
   .month-btn:hover { color: var(--text); background: var(--surface2); }
   .month-btn.active { color: var(--accent); background: rgba(200,169,110,0.08); border-right: 2px solid var(--accent); font-weight: 600; }
+  
   .month-badge { font-size: 10px; font-family: 'DM Mono', monospace; padding: 2px 6px; border-radius: 4px; font-weight: 500; }
   .badge-pos { background: rgba(76,175,125,0.15); color: var(--green); }
   .badge-neg { background: rgba(224,92,92,0.15); color: var(--red); }
   .badge-zero { background: var(--surface2); color: var(--text3); }
-  main { flex: 1; overflow-y: auto; padding: 28px; }
-  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: relative; overflow: hidden; }
+  
+  main { flex: 1; overflow-y: auto; padding: 24px; }
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; position: relative; overflow: hidden; }
   .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
   .card.c-total::before { background: var(--accent); }
   .card.c-paid::before { background: var(--green); }
   .card.c-pending::before { background: var(--orange); }
   .card.c-saldo::before { background: var(--blue); }
-  .card-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text2); margin-bottom: 10px; }
-  .card-value { font-family: 'DM Mono', monospace; font-size: 24px; font-weight: 500; color: var(--text); }
+  .card-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text2); margin-bottom: 8px; }
+  .card-value { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; color: var(--text); }
   .card-value.positive { color: var(--green); }
   .card-value.negative { color: var(--red); }
-  .card-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
+  
   .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .section-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); }
+  .section-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text); }
   .section-title span { color: var(--accent); }
+  
   .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; }
   table { width: 100%; border-collapse: collapse; }
-  thead th { background: var(--surface2); padding: 12px 16px; text-align: left; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); font-weight: 600; border-bottom: 1px solid var(--border); }
-  thead th:last-child { text-align: center; }
+  thead th { background: var(--surface2); padding: 14px 16px; text-align: left; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); font-weight: 600; border-bottom: 1px solid var(--border); }
   tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
   tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: rgba(255,255,255,0.02); }
-  tbody td { padding: 13px 16px; }
+  tbody tr:hover { background: rgba(255,255,255,0.01); }
+  tbody td { padding: 14px 16px; vertical-align: middle; }
+  
   .td-desc { font-weight: 500; color: var(--text); }
   .td-date { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text2); }
   .td-valor { font-family: 'DM Mono', monospace; font-weight: 500; color: var(--text); text-align: right; }
-  .td-status { text-align: center; }
-  .td-actions { text-align: center; white-space: nowrap; }
-  .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; user-select: none; }
-  .status.pago { background: rgba(76,175,125,0.15); color: var(--green); border: 1px solid rgba(76,175,125,0.3); }
-  .status.pendente { background: rgba(224,144,74,0.12); color: var(--orange); border: 1px solid rgba(224,144,74,0.3); }
-  .status.vencido { background: rgba(224,92,92,0.12); color: var(--red); border: 1px solid rgba(224,92,92,0.3); }
-  .icon-btn { background: none; border: 1px solid transparent; border-radius: 6px; color: var(--text3); cursor: pointer; padding: 4px 7px; font-size: 14px; transition: all 0.15s; margin: 0 2px; }
+  .td-status { text-align: center; width: 110px; }
+  .td-actions { text-align: center; white-space: nowrap; width: 100px; }
+  
+  .status { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; user-select: none; min-width: 90px; }
+  .status.pago { background: rgba(76,175,125,0.12); color: var(--green); border: 1px solid rgba(76,175,125,0.25); }
+  .status.pendente { background: rgba(224,144,74,0.1); color: var(--orange); border: 1px solid rgba(224,144,74,0.25); }
+  .status.vencido { background: rgba(224,92,92,0.1); color: var(--red); border: 1px solid rgba(224,92,92,0.25); }
+  
+  .icon-btn { background: none; border: 1px solid transparent; border-radius: 6px; color: var(--text2); cursor: pointer; padding: 8px 12px; font-size: 15px; transition: all 0.15s; display: inline-flex; align-items: center; justify-content: center; }
   .icon-btn:hover { border-color: var(--border2); color: var(--text); background: var(--surface2); }
   .icon-btn.del:hover { border-color: var(--red); color: var(--red); }
-  .progress-wrap { margin-bottom: 28px; }
+  
+  /* Estilo de lista alternativo para Mobile */
+  .mobile-list { display: none; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .mobile-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .mobile-card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .mobile-card-title { font-weight: 600; font-size: 15px; color: var(--text); }
+  .mobile-card-date { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .mobile-card-value { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; text-align: right; }
+  .mobile-card-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 4px; }
+  
+  .progress-wrap { margin-bottom: 24px; }
   .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 6px; }
   .progress-bar { height: 6px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
   .progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--green), var(--accent)); transition: width 0.5s ease; }
-  .annual-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 24px; }
-  .annual-cell { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); padding: 14px 10px; text-align: center; cursor: pointer; transition: all 0.15s; }
+  
+  .annual-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
+  .annual-cell { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); padding: 16px 10px; text-align: center; cursor: pointer; transition: all 0.15s; }
   .annual-cell:hover { border-color: var(--accent); }
-  .annual-cell-name { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 6px; }
-  .annual-cell-val { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; }
+  .annual-cell-name { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 6px; font-weight: 500; }
+  .annual-cell-val { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; }
   .annual-cell-val.pos { color: var(--green); }
   .annual-cell-val.neg { color: var(--red); }
-  .annual-cell-val.zero { color: var(--text3); }
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
   .modal-overlay.open { display: flex; }
-  .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); padding: 28px; width: 420px; max-width: 90vw; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
-  .modal h2 { font-family: 'DM Serif Display', serif; font-size: 20px; margin-bottom: 20px; color: var(--accent); }
-  .form-row { margin-bottom: 14px; }
+  .modal { background: var(--surface); border: 1px solid var(--border2); border-top-left-radius: var(--radius); border-top-right-radius: var(--radius); padding: 24px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
+  .modal h2 { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 20px; color: var(--accent); }
+  .form-row { margin-bottom: 16px; }
   .form-row label { display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text2); margin-bottom: 6px; }
-  .form-row input, .form-row select { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius2); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 10px 12px; outline: none; }
+  .form-row input, .form-row select { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius2); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; padding: 12px; outline: none; -webkit-appearance: none; }
   .form-row input:focus, .form-row select:focus { border-color: var(--accent); }
-  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius2); padding: 12px 18px; font-size: 13px; color: var(--text); z-index: 9999; transform: translateY(80px); opacity: 0; transition: all 0.3s ease; pointer-events: none; }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast.success { border-left: 3px solid var(--green); }
-  .toast.error { border-left: 3px solid var(--red); }
-  .renda-row { display: flex; gap: 10px; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 16px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+  .modal-actions .btn { flex: 1; justify-content: center; padding: 12px; }
+  
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius2); padding: 12px 18px; font-size: 13px; color: var(--text); z-index: 9999; transform: translateY(80px); opacity: 0; transition: all 0.3s ease; }
+  .renda-row { display: flex; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 20px; }
   .renda-row label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text2); white-space: nowrap; }
-  .renda-input { background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius2); color: var(--text); font-family: 'DM Mono', monospace; font-size: 15px; padding: 8px 12px; outline: none; width: 160px; }
-  ::-webkit-scrollbar { width: 6px; }
+  .renda-input { background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius2); color: var(--text); font-family: 'DM Mono', monospace; font-size: 15px; padding: 10px 12px; outline: none; width: 100%; max-width: 180px; }
+  
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
-  @media (max-width: 900px) { .cards { grid-template-columns: repeat(2,1fr); } .annual-grid { grid-template-columns: repeat(3,1fr); } aside { width: 150px; min-width: 150px; } }
+
+  /* ---------------- QUERIES DE RESPONSIVIDADE (MOBILE FIRST / ADAPTATIVO) ---------------- */
+  @media (min-width: 769px) {
+    .modal-overlay { align-items: center; }
+    .modal { border-radius: var(--radius); width: 420px; }
+    .modal-actions .btn { flex: none; }
+  }
+
+  @media (max-width: 768px) {
+    header { height: auto; padding: 12px 16px; flex-direction: column; gap: 12px; align-items: flex-start; }
+    .header-right { width: 100%; justify-content: space-between; }
+    .header-right .btn { flex: 1; justify-content: center; padding: 8px; font-size: 12px; }
+    
+    .app { flex-direction: column; height: calc(100vh - 105px); }
+    
+    aside {
+      width: 100%; min-width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border);
+      padding: 0; flex-direction: row; overflow-x: auto; overflow-y: hidden; white-space: nowrap;
+      position: sticky; top: 0; z-index: 90; scrollbar-width: none;
+    }
+    aside::-webkit-scrollbar { display: none; }
+    .aside-label { display: none; }
+    .sidebar-menu { flex-direction: row; width: auto; }
+    
+    .month-btn { padding: 14px 18px; width: auto; display: inline-flex; gap: 8px; border-bottom: 2px solid transparent; border-right: none; }
+    .month-btn.active { border-bottom: 2px solid var(--accent); border-right: none; background: transparent; }
+    #btn-annual { border-left: 1px solid var(--border); border-radius: 0; }
+    
+    main { padding: 16px; }
+    .cards { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+    .card { padding: 14px; }
+    .card-value { font-size: 18px; }
+    
+    .renda-row { justify-content: space-between; }
+    .renda-input { max-width: 130px; }
+    
+    /* Alternância de tabela para lista no mobile */
+    .table-wrap { display: none; }
+    .mobile-list { display: flex; }
+    
+    .annual-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  }
+
+  @media (max-width: 360px) {
+    .cards { grid-template-columns: 1fr; }
+    .annual-grid { grid-template-columns: repeat(2, 1fr); }
+  }
 </style>
 
 <script type="module">
@@ -147,12 +216,10 @@
   const db = getDatabase(app);
   const dbRef = ref(db, 'dados_financeiros');
 
-  // Enviar para nuvem
   window.saveToCloud = function(dados) {
     set(dbRef, dados);
   };
 
-  // Carregar da nuvem
   onValue(dbRef, (snapshot) => {
     const cloudData = snapshot.val();
     if (cloudData) {
@@ -162,32 +229,29 @@
     }
   });
 </script>
-
 </head>
 <body>
 
 <header>
   <div class="logo">Contas <span>2026</span></div>
   <div class="header-right">
-    <button class="btn" onclick="exportData()">⬇ Exportar JSON</button>
+    <button class="btn" onclick="exportData()">⬇ Exportar</button>
     <button class="btn btn-accent" onclick="openModal()">＋ Nova Conta</button>
   </div>
 </header>
 
 <div class="app">
   <aside>
-    <div class="aside-label">Meses</div>
-    <div id="sidebar-months"></div>
-    <div class="aside-label" style="margin-top:16px">Visão Geral</div>
+    <div class="sidebar-menu" id="sidebar-months"></div>
     <button class="month-btn" onclick="showAnnual()" id="btn-annual">📊 Anual</button>
   </aside>
   <main id="main-content"></main>
 </div>
 
-<div class="modal-overlay" id="modal-overlay">
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this) closeModal()">
   <div class="modal">
     <h2 id="modal-title">Nova Conta</h2>
-    <div class="form-row"><label>Descrição</label><input id="f-desc" type="text"></div>
+    <div class="form-row"><label>Descrição</label><input id="f-desc" type="text" autocomplete="off"></div>
     <div class="form-row"><label>Valor (R$)</label><input id="f-valor" type="number" step="0.01"></div>
     <div class="form-row"><label>Vencimento</label><input id="f-venc" type="date"></div>
     <div class="form-row">
@@ -221,9 +285,7 @@ const MONTH_SHORT = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT'
 
 function uid() { return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
 
-// Estado Global
 window.data = JSON.parse(localStorage.getItem('contas2026')) || {};
-// Se o banco estiver vazio, inicia estrutura básica
 if (Object.keys(window.data).length === 0) {
     MONTHS.forEach(m => window.data[m] = { renda: 0, contas: [] });
 }
@@ -275,6 +337,16 @@ function renderSidebar() {
     </button>`;
   }).join('');
   document.getElementById('btn-annual').className = 'month-btn' + (viewMode==='annual'?' active':'');
+  
+  // Auto-scrola a barra de meses no mobile para o mês ativo
+  if(viewMode === 'month') {
+    setTimeout(() => {
+      const activeBtn = el.querySelector('.month-btn.active');
+      if(activeBtn && window.innerWidth <= 768) {
+        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }, 100);
+  }
 }
 
 function renderMonth(month) {
@@ -288,9 +360,12 @@ function renderMonth(month) {
     return (a.venc && b.venc) ? new Date(a.venc)-new Date(b.venc) : 0;
   });
 
-  document.getElementById('main-content').innerHTML = `
+  const mainEl = document.getElementById('main-content');
+  
+  // HTML comum do cabeçalho de resumo
+  let baseHTML = `
     <div class="section-header"><div class="section-title">${month} <span>2026</span></div></div>
-    <div class="renda-row"><label>Renda (R$)</label><input class="renda-input" type="number" value="${t.renda}" onchange="updateRenda('${month}', this.value)"></div>
+    <div class="renda-row"><label>Renda (R$)</label><input class="renda-input" type="number" step="0.01" value="${t.renda}" onchange="updateRenda('${month}', this.value)"></div>
     <div class="cards">
         <div class="card c-total"><div class="card-label">Total</div><div class="card-value">${fmt(t.total)}</div></div>
         <div class="card c-paid"><div class="card-label">Pago</div><div class="card-value positive">${fmt(t.pago)}</div></div>
@@ -298,6 +373,10 @@ function renderMonth(month) {
         <div class="card c-saldo"><div class="card-label">Saldo</div><div class="card-value ${t.saldo>=0?'positive':'negative'}">${fmt(t.saldo)}</div></div>
     </div>
     <div class="progress-wrap"><div class="progress-label"><span>${pct}% pago</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div></div>
+  `;
+
+  // Render para Computadores (Tabela)
+  let tableHTML = `
     <div class="table-wrap">
       <table>
         <thead><tr><th>Descrição</th><th>Vencimento</th><th style="text-align:right">Valor</th><th>Status</th><th>Ações</th></tr></thead>
@@ -306,7 +385,7 @@ function renderMonth(month) {
             const st = getStatus(c);
             const stLabel = st === 'pago' ? '✓ Pago' : st === 'vencido' ? '⚠ Vencido' : '○ Pendente';
             return `<tr>
-              <td>${c.desc}</td><td>${fmtDate(c.venc)}</td><td class="td-valor">${fmt(c.valor)}</td>
+              <td class="td-desc">${c.desc}</td><td><span class="td-date">${fmtDate(c.venc)}</span></td><td class="td-valor">${fmt(c.valor)}</td>
               <td class="td-status"><span class="status ${st}" onclick="toggleStatus('${month}','${c.id}')">${stLabel}</span></td>
               <td class="td-actions">
                 <button class="icon-btn" onclick="openEdit('${month}','${c.id}')">✎</button>
@@ -317,6 +396,35 @@ function renderMonth(month) {
         </tbody>
       </table>
     </div>`;
+
+  // Render para Celulares (Lista de Cards Dinâmicos)
+  let mobileListHTML = `
+    <div class="mobile-list">
+      ${sorted.length === 0 ? '<div style="text-align:center; padding:20px; color:var(--text3)">Nenhuma conta lançada.</div>' : ''}
+      ${sorted.map(c => {
+        const st = getStatus(c);
+        const stLabel = st === 'pago' ? '✓ Pago' : st === 'vencido' ? '⚠ Vencido' : '○ Pendente';
+        return `
+          <div class="mobile-card">
+            <div class="mobile-card-top">
+              <div>
+                <div class="mobile-card-title">${c.desc}</div>
+                <div class="mobile-card-date">Venc: ${fmtDate(c.venc)}</div>
+              </div>
+              <div class="mobile-card-value">${fmt(c.valor)}</div>
+            </div>
+            <div class="mobile-card-actions">
+              <span class="status ${st}" onclick="toggleStatus('${month}','${c.id}')">${stLabel}</span>
+              <div>
+                <button class="icon-btn" onclick="openEdit('${month}','${c.id}')" style="padding:6px 10px;">✎ Editar</button>
+                <button class="icon-btn del" onclick="deleteItem('${month}','${c.id}')" style="padding:6px 10px; margin-left:6px;">✕</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('')}
+    </div>`;
+
+  mainEl.innerHTML = baseHTML + tableHTML + mobileListHTML;
 }
 
 function renderAnnual() {
@@ -343,19 +451,31 @@ function toggleStatus(month, id) {
   if (c) { c.status = (c.status === 'pago' ? 'pendente' : 'pago'); save(); render(); }
 }
 function updateRenda(month, val) { window.data[month].renda = parseFloat(val)||0; save(); render(); }
-function deleteItem(month, id) { window.data[month].contas = window.data[month].contas.filter(c=>c.id!==id); save(); render(); }
+function deleteItem(month, id) { 
+  if(confirm("Deseja realmente apagar esta conta?")) {
+    window.data[month].contas = window.data[month].contas.filter(c=>c.id!==id); save(); render(); 
+  }
+}
 
 function openModal(month) {
-  editingId = null; document.getElementById('modal-overlay').classList.add('open');
+  editingId = null; 
+  document.getElementById('modal-title').innerText = "Nova Conta";
+  document.getElementById('modal-overlay').classList.add('open');
   document.getElementById('f-desc').value = ''; document.getElementById('f-valor').value = '';
+  document.getElementById('f-venc').value = '';
   document.getElementById('f-mes').value = month || currentMonth;
+  document.getElementById('f-status').value = 'pendente';
 }
 function openEdit(month, id) {
   const c = window.data[month].contas.find(x=>x.id===id);
   if (!c) return;
-  editingId = id; document.getElementById('modal-overlay').classList.add('open');
+  editingId = id; 
+  document.getElementById('modal-title').innerText = "Editar Conta";
+  document.getElementById('modal-overlay').classList.add('open');
   document.getElementById('f-desc').value = c.desc; document.getElementById('f-valor').value = c.valor;
-  document.getElementById('f-venc').value = c.venc; document.getElementById('f-mes').value = month;
+  document.getElementById('f-venc').value = c.venc || ''; 
+  document.getElementById('f-mes').value = month;
+  document.getElementById('f-status').value = c.status || 'pendente';
 }
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 
@@ -365,6 +485,8 @@ function saveItem() {
   const venc = document.getElementById('f-venc').value;
   const mes = document.getElementById('f-mes').value;
   const status = document.getElementById('f-status').value;
+
+  if(!desc) { alert("Por favor, digite uma descrição."); return; }
 
   if (editingId) {
     const c = window.data[mes].contas.find(x=>x.id===editingId);
@@ -382,7 +504,10 @@ function exportData() {
 }
 
 function fmt(v) { return 'R$ ' + (v||0).toLocaleString('pt-BR', {minimumFractionDigits:2}); }
-function fmtShort(v) { return (v/1000).toFixed(1) + 'k'; }
+function fmtShort(v) { 
+  if (Math.abs(v) >= 1000) return (v/1000).toFixed(1) + 'k';
+  return v.toFixed(0);
+}
 function fmtDate(d) { if(!d) return '—'; const [y,m,dd] = d.split('-'); return `${dd}/${m}/${y}`; }
 
 render();
