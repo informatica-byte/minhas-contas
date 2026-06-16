@@ -270,6 +270,21 @@
         <option value="pago">Pago</option>
       </select>
     </div>
+    <div class="form-row" id="row-parcelas">
+      <label>Repetir nos próximos meses</label>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <select id="f-parcelas" style="width:100%; background:var(--surface2); border:1px solid var(--border2); border-radius:var(--radius2); color:var(--text); font-family:'DM Sans',sans-serif; font-size:15px; padding:12px; outline:none; -webkit-appearance:none;">
+          <option value="1">Apenas este mês (sem repetição)</option>
+          <option value="2">+ 1 mês (2x no total)</option>
+          <option value="3">+ 2 meses (3x no total)</option>
+          <option value="4">+ 3 meses (4x no total)</option>
+          <option value="5">+ 4 meses (5x no total)</option>
+          <option value="6">+ 5 meses (6x no total)</option>
+          <option value="12">12x (ano inteiro)</option>
+        </select>
+      </div>
+      <div id="parcelas-info" style="font-size:11px; color:var(--accent); margin-top:6px; min-height:16px;"></div>
+    </div>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal()">Cancelar</button>
       <button class="btn btn-accent" onclick="saveItem()">Salvar</button>
@@ -293,6 +308,7 @@ if (Object.keys(window.data).length === 0) {
 let currentMonth = MONTHS[new Date().getMonth()];
 let viewMode = 'month';
 let editingId = null;
+let editingMonth = null;
 
 function save() {
   localStorage.setItem('contas2026', JSON.stringify(window.data));
@@ -465,36 +481,130 @@ function openModal(month) {
   document.getElementById('f-venc').value = '';
   document.getElementById('f-mes').value = month || currentMonth;
   document.getElementById('f-status').value = 'pendente';
+  document.getElementById('f-parcelas').value = '1';
+  document.getElementById('row-parcelas').style.display = '';
+  document.querySelector('#row-parcelas label').innerText = 'Repetir nos pr\u00f3ximos meses';
+  document.getElementById('parcelas-info').innerText = '';
 }
 function openEdit(month, id) {
   const c = window.data[month].contas.find(x=>x.id===id);
   if (!c) return;
-  editingId = id; 
+  editingId = id;
+  editingMonth = month;
   document.getElementById('modal-title').innerText = "Editar Conta";
   document.getElementById('modal-overlay').classList.add('open');
   document.getElementById('f-desc').value = c.desc; document.getElementById('f-valor').value = c.valor;
   document.getElementById('f-venc').value = c.venc || ''; 
   document.getElementById('f-mes').value = month;
   document.getElementById('f-status').value = c.status || 'pendente';
+  document.getElementById('f-parcelas').value = '1';
+  document.getElementById('row-parcelas').style.display = '';
+  document.querySelector('#row-parcelas label').innerText = 'Repetir tamb\u00e9m nos pr\u00f3ximos meses';
+  document.getElementById('parcelas-info').innerText = '';
+}
+
+// Mostra preview dos meses quando muda a seleção de parcelas
+document.getElementById('f-parcelas').addEventListener('change', updateParcelasInfo);
+document.getElementById('f-mes').addEventListener('change', updateParcelasInfo);
+function updateParcelasInfo() {
+  const n = parseInt(document.getElementById('f-parcelas').value) || 1;
+  if (n <= 1) { document.getElementById('parcelas-info').innerText = ''; return; }
+  const startIdx = MONTHS.indexOf(document.getElementById('f-mes').value);
+  if (startIdx === -1) return;
+  const meses = [];
+  for (let i = 0; i < n; i++) {
+    const idx = (startIdx + i) % 12;
+    meses.push(MONTHS[idx].charAt(0) + MONTHS[idx].slice(1).toLowerCase());
+  }
+  document.getElementById('parcelas-info').innerText = '📅 ' + meses.join(' → ');
 }
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 
 function saveItem() {
-  const desc = document.getElementById('f-desc').value;
+  const desc = document.getElementById('f-desc').value.trim();
   const valor = parseFloat(document.getElementById('f-valor').value)||0;
   const venc = document.getElementById('f-venc').value;
   const mes = document.getElementById('f-mes').value;
   const status = document.getElementById('f-status').value;
+  const parcelas = parseInt(document.getElementById('f-parcelas').value) || 1;
 
   if(!desc) { alert("Por favor, digite uma descrição."); return; }
 
   if (editingId) {
-    const c = window.data[mes].contas.find(x=>x.id===editingId);
+    // Modo edição: sempre atualiza o item atual
+    const c = window.data[editingMonth].contas.find(x=>x.id===editingId);
     if (c) Object.assign(c, {desc, valor, venc, status});
-  } else {
+    // Se escolheu repetir, replica nos meses seguintes
+    if (parcelas > 1) {
+      const startIdx = MONTHS.indexOf(editingMonth);
+      const vencDay = venc ? venc.split('-')[2] : null;
+      for (let i = 1; i < parcelas; i++) {
+        const mesIdx = (startIdx + i) % 12;
+        const mesDest = MONTHS[mesIdx];
+        const ano = 2026 + Math.floor((startIdx + i) / 12);
+        let vencParcela = '';
+        if (vencDay) {
+          const mesNum = String(mesIdx + 1).padStart(2, '0');
+          const maxDia = new Date(ano, mesIdx + 1, 0).getDate();
+          const dia = String(Math.min(parseInt(vencDay), maxDia)).padStart(2, '0');
+          vencParcela = `${ano}-${mesNum}-${dia}`;
+        }
+        // Remove numeração anterior da descrição se houver, e adiciona nova
+        const descBase = desc.replace(/ \(\d+\/\d+\)$/, '');
+        window.data[mesDest].contas.push({
+          id: uid(),
+          desc: descBase + ` (${i+1}/${parcelas})`,
+          valor,
+          venc: vencParcela,
+          status: 'pendente'
+        });
+      }
+      // Atualiza a descrição da conta original com (1/N) se ainda não tiver
+      const descBase = desc.replace(/ \(\d+\/\d+\)$/, '');
+      if (c) c.desc = descBase + ` (1/${parcelas})`;
+      showToast(`\u2713 Conta atualizada e ${parcelas-1} c\u00f3pia(s) criada(s)!`);
+    }
+  } else if (parcelas <= 1) {
+    // Conta única sem repetição
     window.data[mes].contas.push({id:uid(), desc, valor, venc, status});
+  } else {
+    // Lançamento parcelado: cria em cada mês
+    const startIdx = MONTHS.indexOf(mes);
+    const vencDay = venc ? venc.split('-')[2] : null; // dia do vencimento
+    for (let i = 0; i < parcelas; i++) {
+      const mesIdx = (startIdx + i) % 12;
+      const mesDest = MONTHS[mesIdx];
+      // Calcula o ano: se ultrapassar dezembro, vai para 2027
+      const ano = 2026 + Math.floor((startIdx + i) / 12);
+      // Monta data de vencimento no mês correspondente
+      let vencParcela = '';
+      if (vencDay) {
+        const mesNum = String(mesIdx + 1).padStart(2, '0');
+        // Garante que o dia não ultrapasse o último dia do mês
+        const maxDia = new Date(ano, mesIdx + 1, 0).getDate();
+        const dia = String(Math.min(parseInt(vencDay), maxDia)).padStart(2, '0');
+        vencParcela = `${ano}-${mesNum}-${dia}`;
+      }
+      const labelParcela = parcelas > 1 ? ` (${i+1}/${parcelas})` : '';
+      window.data[mesDest].contas.push({
+        id: uid(),
+        desc: desc + labelParcela,
+        valor,
+        venc: vencParcela,
+        status: i === 0 ? status : 'pendente'
+      });
+    }
+    showToast(`✓ ${parcelas} parcelas lançadas com sucesso!`);
   }
   save(); closeModal(); render();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerText = msg;
+  t.style.transform = 'translateY(0)';
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.transform = 'translateY(80px)'; t.style.opacity = '0'; }, 3000);
 }
 
 function exportData() {
