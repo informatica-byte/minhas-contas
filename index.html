@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Contas 2026 - Nuvem</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #181818;
+    --surface2: #222222;
+    --border: #2a2a2a;
+    --border2: #333;
+    --text: #e8e4dc;
+    --text2: #888;
+    --text3: #555;
+    --accent: #c8a96e;
+    --accent2: #e8c878;
+    --green: #4caf7d;
+    --red: #e05c5c;
+    --orange: #e0904a;
+    --blue: #5c8fe0;
+    --radius: 12px;
+    --radius2: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+    -webkit-tap-highlight-color: transparent;
+  }
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--accent); letter-spacing: 0.5px; }
+  .logo span { color: var(--text2); font-size: 13px; font-family: 'DM Sans', sans-serif; margin-left: 8px; }
+  .header-right { display: flex; gap: 8px; align-items: center; }
+  
+  .btn {
+    padding: 10px 16px; border-radius: var(--radius2); border: 1px solid var(--border2);
+    background: var(--surface2); color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; cursor: pointer; transition: all 0.18s; display: flex; align-items: center; gap: 6px;
+    font-weight: 500;
+  }
+  .btn:hover { background: var(--border); border-color: var(--accent); color: var(--accent); }
+  .btn-accent { background: var(--accent); color: #111; border-color: var(--accent); font-weight: 600; }
+  .btn-accent:hover { background: var(--accent2); color: #111; }
+  
+  .app { display: flex; height: calc(100vh - 64px); }
+  
+  aside { width: 220px; min-width: 220px; background: var(--surface); border-right: 1px solid var(--border); padding: 16px 0; overflow-y: auto; display: flex; flex-direction: column; }
+  .aside-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); padding: 4px 20px 8px; margin-top: 8px; }
+  .sidebar-menu { display: flex; flex-direction: column; width: 100%; }
+  
+  .month-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 12px 20px; background: none; border: none; color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.15s; text-align: left; }
+  .month-btn:hover { color: var(--text); background: var(--surface2); }
+  .month-btn.active { color: var(--accent); background: rgba(200,169,110,0.08); border-right: 2px solid var(--accent); font-weight: 600; }
+  
+  .month-badge { font-size: 10px; font-family: 'DM Mono', monospace; padding: 2px 6px; border-radius: 4px; font-weight: 500; }
+  .badge-pos { background: rgba(76,175,125,0.15); color: var(--green); }
+  .badge-neg { background: rgba(224,92,92,0.15); color: var(--red); }
+  .badge-zero { background: var(--surface2); color: var(--text3); }
+  
+  main { flex: 1; overflow-y: auto; padding: 24px; }
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .card.c-total::before { background: var(--accent); }
+  .card.c-paid::before { background: var(--green); }
+  .card.c-pending::before { background: var(--orange); }
+  .card.c-saldo::before { background: var(--blue); }
+  .card-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text2); margin-bottom: 8px; }
+  .card-value { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; color: var(--text); }
+  .card-value.positive { color: var(--green); }
+  .card-value.negative { color: var(--red); }
+  
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .section-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text); }
+  .section-title span { color: var(--accent); }
+  
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: var(--surface2); padding: 14px 16px; text-align: left; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); font-weight: 600; border-bottom: 1px solid var(--border); }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.01); }
+  tbody td { padding: 14px 16px; vertical-align: middle; }
+  
+  .td-desc { font-weight: 500; color: var(--text); }
+  .td-date { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text2); }
+  .td-valor { font-family: 'DM Mono', monospace; font-weight: 500; color: var(--text); text-align: right; }
+  .td-status { text-align: center; width: 110px; }
+  .td-actions { text-align: center; white-space: nowrap; width: 100px; }
+  
+  .status { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; user-select: none; min-width: 90px; }
+  .status.pago { background: rgba(76,175,125,0.12); color: var(--green); border: 1px solid rgba(76,175,125,0.25); }
+  .status.pendente { background: rgba(224,144,74,0.1); color: var(--orange); border: 1px solid rgba(224,144,74,0.25); }
+  .status.vencido { background: rgba(224,92,92,0.1); color: var(--red); border: 1px solid rgba(224,92,92,0.25); }
+  
+  .icon-btn { background: none; border: 1px solid transparent; border-radius: 6px; color: var(--text2); cursor: pointer; padding: 8px 12px; font-size: 15px; transition: all 0.15s; display: inline-flex; align-items: center; justify-content: center; }
+  .icon-btn:hover { border-color: var(--border2); color: var(--text); background: var(--surface2); }
+  .icon-btn.del:hover { border-color: var(--red); color: var(--red); }
+  
+  /* Estilo de lista alternativo para Mobile */
+  .mobile-list { display: none; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .mobile-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .mobile-card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .mobile-card-title { font-weight: 600; font-size: 15px; color: var(--text); }
+  .mobile-card-date { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .mobile-card-value { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; text-align: right; }
+  .mobile-card-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 4px; }
+  
+  .progress-wrap { margin-bottom: 24px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+  .progress-bar { height: 6px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--green), var(--accent)); transition: width 0.5s ease; }
+  
+  .annual-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
+  .annual-cell { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); padding: 16px 10px; text-align: center; cursor: pointer; transition: all 0.15s; }
+  .annual-cell:hover { border-color: var(--accent); }
+  .annual-cell-name { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 6px; font-weight: 500; }
+  .annual-cell-val { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; }
+  .annual-cell-val.pos { color: var(--green); }
+  .annual-cell-val.neg { color: var(--red); }
+  
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border2); border-top-left-radius: var(--radius); border-top-right-radius: var(--radius); padding: 24px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
+  .modal h2 { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 20px; color: var(--accent); }
+  .form-row { margin-bottom: 16px; }
+  .form-row label { display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text2); margin-bottom: 6px; }
+  .form-row input, .form-row select { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius2); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; padding: 12px; outline: none; -webkit-appearance: none; }
+  .form-row input:focus, .form-row select:focus { border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+  .modal-actions .btn { flex: 1; justify-content: center; padding: 12px; }
+  
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius2); padding: 12px 18px; font-size: 13px; color: var(--text); z-index: 9999; transform: translateY(80px); opacity: 0; transition: all 0.3s ease; }
+  .renda-row { display: flex; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 20px; }
+  .renda-row label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text2); white-space: nowrap; }
+  .renda-input { background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius2); color: var(--text); font-family: 'DM Mono', monospace; font-size: 15px; padding: 10px 12px; outline: none; width: 100%; max-width: 180px; }
+  
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
+
+  /* ---------------- QUERIES DE RESPONSIVIDADE (MOBILE FIRST / ADAPTATIVO) ---------------- */
+  @media (min-width: 769px) {
+    .modal-overlay { align-items: center; }
+    .modal { border-radius: var(--radius); width: 420px; }
+    .modal-actions .btn { flex: none; }
+  }
+
+  @media (max-width: 768px) {
+    header { height: auto; padding: 12px 16px; flex-direction: column; gap: 12px; align-items: flex-start; }
+    .header-right { width: 100%; justify-content: space-between; }
+    .header-right .btn { flex: 1; justify-content: center; padding: 8px; font-size: 12px; }
+    
+    .app { flex-direction: column; height: calc(100vh - 105px); }
+    
+    aside {
+      width: 100%; min-width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border);
+      padding: 0; flex-direction: row; overflow-x: auto; overflow-y: hidden; white-space: nowrap;
+      position: sticky; top: 0; z-index: 90; scrollbar-width: none;
+    }
+    aside::-webkit-scrollbar { display: none; }
+    .aside-label { display: none; }
+    .sidebar-menu { flex-direction: row; width: auto; }
+    
+    .month-btn { padding: 14px 18px; width: auto; display: inline-flex; gap: 8px; border-bottom: 2px solid transparent; border-right: none; }
+    .month-btn.active { border-bottom: 2px solid var(--accent); border-right: none; background: transparent; }
+    #btn-annual { border-left: 1px solid var(--border); border-radius: 0; }
+    
+    main { padding: 16px; }
+    .cards { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+    .card { padding: 14px; }
+    .card-value { font-size: 18px; }
+    
+    .renda-row { justify-content: space-between; }
+    .renda-input { max-width: 130px; }
+    
+    /* Alternância de tabela para lista no mobile */
+    .table-wrap { display: none; }
+    .mobile-list { display: flex; }
+    
+    .annual-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  }
+
+  @media (max-width: 360px) {
+    .cards { grid-template-columns: 1fr; }
+    .annual-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+  const firebaseConfig = {
+    databaseURL: "https://contas-2026-43a86-default-rtdb.firebaseio.com/",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const dbRef = ref(db, 'dados_financeiros');
+
+  window.saveToCloud = function(dados) {
+    set(dbRef, dados);
+  };
+
+  onValue(dbRef, (snapshot) => {
+    const cloudData = snapshot.val();
+    if (cloudData) {
+      window.data = cloudData;
+      window.render();
+      console.log("Dados sincronizados com a nuvem.");
+    }
+  });
+</script>
+</head>
+<body>
+
+<header>
+  <div class="logo">Contas <span>2026</span></div>
+  <div class="header-right">
+    <button class="btn" onclick="exportData()">⬇ Exportar</button>
+    <button class="btn btn-accent" onclick="openModal()">＋ Nova Conta</button>
+  </div>
+</header>
+
+<div class="app">
+  <aside>
+    <div class="sidebar-menu" id="sidebar-months"></div>
+    <button class="month-btn" onclick="showAnnual()" id="btn-annual">📊 Anual</button>
+  </aside>
+  <main id="main-content"></main>
+</div>
+
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this) closeModal()">
+  <div class="modal">
+    <h2 id="modal-title">Nova Conta</h2>
+    <div class="form-row"><label>Descrição</label><input id="f-desc" type="text" autocomplete="off"></div>
+    <div class="form-row"><label>Valor (R$)</label><input id="f-valor" type="number" step="0.01"></div>
+    <div class="form-row"><label>Vencimento</label><input id="f-venc" type="date"></div>
+    <div class="form-row">
+      <label>Mês</label>
+      <select id="f-mes">
+        <option>JANEIRO</option><option>FEVEREIRO</option><option>MARÇO</option>
+        <option>ABRIL</option><option>MAIO</option><option>JUNHO</option>
+        <option>JULHO</option><option>AGOSTO</option><option>SETEMBRO</option>
+        <option>OUTUBRO</option><option>NOVEMBRO</option><option>DEZEMBRO</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Status</label>
+      <select id="f-status">
+        <option value="pendente">Pendente</option>
+        <option value="pago">Pago</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-accent" onclick="saveItem()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MONTHS = ['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+const MONTH_SHORT = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+
+function uid() { return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
+
+window.data = JSON.parse(localStorage.getItem('contas2026')) || {};
+if (Object.keys(window.data).length === 0) {
+    MONTHS.forEach(m => window.data[m] = { renda: 0, contas: [] });
+}
+
+let currentMonth = MONTHS[new Date().getMonth()];
+let viewMode = 'month';
+let editingId = null;
+
+function save() {
+  localStorage.setItem('contas2026', JSON.stringify(window.data));
+  if (window.saveToCloud) window.saveToCloud(window.data);
+}
+
+function totals(month) {
+  const d = window.data[month] || { renda:0, contas:[] };
+  const total = d.contas.reduce((s,c) => s + (c.valor||0), 0);
+  const pago = d.contas.filter(c=>c.status==='pago').reduce((s,c)=>s+(c.valor||0),0);
+  const pendente = total - pago;
+  const saldo = (d.renda||0) - total;
+  return { total, pago, pendente, saldo, renda: d.renda||0 };
+}
+
+function getStatus(conta) {
+  if (conta.status === 'pago') return 'pago';
+  if (conta.venc) {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const v = new Date(conta.venc + 'T00:00:00');
+    if (v < today) return 'vencido';
+  }
+  return 'pendente';
+}
+
+window.render = function() {
+  renderSidebar();
+  if (viewMode === 'annual') renderAnnual();
+  else renderMonth(currentMonth);
+}
+
+function renderSidebar() {
+  const el = document.getElementById('sidebar-months');
+  el.innerHTML = MONTHS.map(m => {
+    const t = totals(m);
+    const badgeCls = t.saldo > 0 ? 'badge-pos' : t.saldo < 0 ? 'badge-neg' : 'badge-zero';
+    const active = viewMode === 'month' && m === currentMonth ? 'active' : '';
+    const valStr = t.saldo !== 0 ? (t.saldo > 0 ? '+' : '') + fmtShort(t.saldo) : '—';
+    return `<button class="month-btn ${active}" onclick="goMonth('${m}')">
+      ${m.charAt(0)+m.slice(1).toLowerCase()}
+      <span class="month-badge ${badgeCls}">${valStr}</span>
+    </button>`;
+  }).join('');
+  document.getElementById('btn-annual').className = 'month-btn' + (viewMode==='annual'?' active':'');
+  
+  // Auto-scrola a barra de meses no mobile para o mês ativo
+  if(viewMode === 'month') {
+    setTimeout(() => {
+      const activeBtn = el.querySelector('.month-btn.active');
+      if(activeBtn && window.innerWidth <= 768) {
+        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }, 100);
+  }
+}
+
+function renderMonth(month) {
+  const d = window.data[month];
+  const t = totals(month);
+  const pct = t.total > 0 ? Math.round((t.pago/t.total)*100) : 0;
+  const sorted = [...d.contas].sort((a,b)=>{
+    const sa = getStatus(a), sb = getStatus(b);
+    const order = {vencido:0, pendente:1, pago:2};
+    if (order[sa]!==order[sb]) return order[sa]-order[sb];
+    return (a.venc && b.venc) ? new Date(a.venc)-new Date(b.venc) : 0;
+  });
+
+  const mainEl = document.getElementById('main-content');
+  
+  // HTML comum do cabeçalho de resumo
+  let baseHTML = `
+    <div class="section-header"><div class="section-title">${month} <span>2026</span></div></div>
+    <div class="renda-row"><label>Renda (R$)</label><input class="renda-input" type="number" step="0.01" value="${t.renda}" onchange="updateRenda('${month}', this.value)"></div>
+    <div class="cards">
+        <div class="card c-total"><div class="card-label">Total</div><div class="card-value">${fmt(t.total)}</div></div>
+        <div class="card c-paid"><div class="card-label">Pago</div><div class="card-value positive">${fmt(t.pago)}</div></div>
+        <div class="card c-pending"><div class="card-label">Pendente</div><div class="card-value" style="color:var(--orange)">${fmt(t.pendente)}</div></div>
+        <div class="card c-saldo"><div class="card-label">Saldo</div><div class="card-value ${t.saldo>=0?'positive':'negative'}">${fmt(t.saldo)}</div></div>
+    </div>
+    <div class="progress-wrap"><div class="progress-label"><span>${pct}% pago</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div></div>
+  `;
+
+  // Render para Computadores (Tabela)
+  let tableHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Descrição</th><th>Vencimento</th><th style="text-align:right">Valor</th><th>Status</th><th>Ações</th></tr></thead>
+        <tbody>
+          ${sorted.map(c => {
+            const st = getStatus(c);
+            const stLabel = st === 'pago' ? '✓ Pago' : st === 'vencido' ? '⚠ Vencido' : '○ Pendente';
+            return `<tr>
+              <td class="td-desc">${c.desc}</td><td><span class="td-date">${fmtDate(c.venc)}</span></td><td class="td-valor">${fmt(c.valor)}</td>
+              <td class="td-status"><span class="status ${st}" onclick="toggleStatus('${month}','${c.id}')">${stLabel}</span></td>
+              <td class="td-actions">
+                <button class="icon-btn" onclick="openEdit('${month}','${c.id}')">✎</button>
+                <button class="icon-btn del" onclick="deleteItem('${month}','${c.id}')">✕</button>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+
+  // Render para Celulares (Lista de Cards Dinâmicos)
+  let mobileListHTML = `
+    <div class="mobile-list">
+      ${sorted.length === 0 ? '<div style="text-align:center; padding:20px; color:var(--text3)">Nenhuma conta lançada.</div>' : ''}
+      ${sorted.map(c => {
+        const st = getStatus(c);
+        const stLabel = st === 'pago' ? '✓ Pago' : st === 'vencido' ? '⚠ Vencido' : '○ Pendente';
+        return `
+          <div class="mobile-card">
+            <div class="mobile-card-top">
+              <div>
+                <div class="mobile-card-title">${c.desc}</div>
+                <div class="mobile-card-date">Venc: ${fmtDate(c.venc)}</div>
+              </div>
+              <div class="mobile-card-value">${fmt(c.valor)}</div>
+            </div>
+            <div class="mobile-card-actions">
+              <span class="status ${st}" onclick="toggleStatus('${month}','${c.id}')">${stLabel}</span>
+              <div>
+                <button class="icon-btn" onclick="openEdit('${month}','${c.id}')" style="padding:6px 10px;">✎ Editar</button>
+                <button class="icon-btn del" onclick="deleteItem('${month}','${c.id}')" style="padding:6px 10px; margin-left:6px;">✕</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('')}
+    </div>`;
+
+  mainEl.innerHTML = baseHTML + tableHTML + mobileListHTML;
+}
+
+function renderAnnual() {
+  const annualTotal = MONTHS.reduce((s,m) => s + totals(m).total, 0);
+  const annualRenda = MONTHS.reduce((s,m) => s + (window.data[m].renda||0), 0);
+  const annualSaldo = annualRenda - annualTotal;
+  document.getElementById('main-content').innerHTML = `
+    <div class="section-header"><div class="section-title">Visão <span>Anual</span></div></div>
+    <div class="cards">
+      <div class="card c-total"><div class="card-label">Gasto Anual</div><div class="card-value">${fmt(annualTotal)}</div></div>
+      <div class="card c-paid"><div class="card-label">Renda Anual</div><div class="card-value positive">${fmt(annualRenda)}</div></div>
+      <div class="card c-saldo"><div class="card-label">Saldo Final</div><div class="card-value ${annualSaldo>=0?'positive':'negative'}">${fmt(annualSaldo)}</div></div>
+    </div>
+    <div class="annual-grid">${MONTHS.map((m,i)=>{
+        const t = totals(m);
+        return `<div class="annual-cell" onclick="goMonth('${m}')"><div class="annual-cell-name">${MONTH_SHORT[i]}</div><div class="annual-cell-val ${t.saldo>=0?'pos':'neg'}">${fmtShort(t.saldo)}</div></div>`;
+    }).join('')}</div>`;
+}
+
+function goMonth(m) { currentMonth = m; viewMode = 'month'; render(); }
+function showAnnual() { viewMode = 'annual'; render(); }
+function toggleStatus(month, id) {
+  const c = window.data[month].contas.find(x=>x.id===id);
+  if (c) { c.status = (c.status === 'pago' ? 'pendente' : 'pago'); save(); render(); }
+}
+function updateRenda(month, val) { window.data[month].renda = parseFloat(val)||0; save(); render(); }
+function deleteItem(month, id) { 
+  if(confirm("Deseja realmente apagar esta conta?")) {
+    window.data[month].contas = window.data[month].contas.filter(c=>c.id!==id); save(); render(); 
+  }
+}
+
+function openModal(month) {
+  editingId = null; 
+  document.getElementById('modal-title').innerText = "Nova Conta";
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('f-desc').value = ''; document.getElementById('f-valor').value = '';
+  document.getElementById('f-venc').value = '';
+  document.getElementById('f-mes').value = month || currentMonth;
+  document.getElementById('f-status').value = 'pendente';
+}
+function openEdit(month, id) {
+  const c = window.data[month].contas.find(x=>x.id===id);
+  if (!c) return;
+  editingId = id; 
+  document.getElementById('modal-title').innerText = "Editar Conta";
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('f-desc').value = c.desc; document.getElementById('f-valor').value = c.valor;
+  document.getElementById('f-venc').value = c.venc || ''; 
+  document.getElementById('f-mes').value = month;
+  document.getElementById('f-status').value = c.status || 'pendente';
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+function saveItem() {
+  const desc = document.getElementById('f-desc').value;
+  const valor = parseFloat(document.getElementById('f-valor').value)||0;
+  const venc = document.getElementById('f-venc').value;
+  const mes = document.getElementById('f-mes').value;
+  const status = document.getElementById('f-status').value;
+
+  if(!desc) { alert("Por favor, digite uma descrição."); return; }
+
+  if (editingId) {
+    const c = window.data[mes].contas.find(x=>x.id===editingId);
+    if (c) Object.assign(c, {desc, valor, venc, status});
+  } else {
+    window.data[mes].contas.push({id:uid(), desc, valor, venc, status});
+  }
+  save(); closeModal(); render();
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(window.data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'backup_contas_2026.json'; a.click();
+}
+
+function fmt(v) { return 'R$ ' + (v||0).toLocaleString('pt-BR', {minimumFractionDigits:2}); }
+function fmtShort(v) { 
+  if (Math.abs(v) >= 1000) return (v/1000).toFixed(1) + 'k';
+  return v.toFixed(0);
+}
+function fmtDate(d) { if(!d) return '—'; const [y,m,dd] = d.split('-'); return `${dd}/${m}/${y}`; }
+
+render();
+</script>
+</body>
+</html>
