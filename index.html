@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Contas 2026 - Nuvem</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Adicionando FontAwesome para os ícones -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
   :root {
     --bg: #0f0f0f;
@@ -156,6 +158,111 @@
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
 
+  /* Estilos para a Calculadora Oculta */
+  .calculator-widget {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 1000;
+  }
+
+  .calc-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--accent);
+      color: #111;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+  }
+
+  .calc-btn:hover {
+      background-color: var(--accent2);
+      transform: scale(1.05);
+  }
+
+  .calc-panel {
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      width: 240px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      transform-origin: bottom left;
+      animation: popIn 0.2s ease-out forwards;
+  }
+
+  @keyframes popIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+  }
+
+  .calc-panel.open {
+      display: flex;
+  }
+
+  .calc-display {
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius2);
+      padding: 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: 20px;
+      color: var(--text);
+      text-align: right;
+      overflow: hidden;
+      white-space: nowrap;
+  }
+
+  .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+  }
+
+  .calc-key {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      border-radius: var(--radius2);
+      padding: 10px 0;
+      font-size: 16px;
+      font-family: 'DM Mono', monospace;
+      cursor: pointer;
+      transition: all 0.1s;
+  }
+
+  .calc-key:hover {
+      background: var(--border);
+  }
+  
+  .calc-key.operator {
+      color: var(--accent);
+      background: rgba(200,169,110,0.1);
+  }
+  
+  .calc-key.equal {
+      background: var(--accent);
+      color: #111;
+      border-color: var(--accent);
+  }
+  
+  .calc-key.equal:hover {
+      background: var(--accent2);
+  }
+
   /* ---------------- QUERIES DE RESPONSIVIDADE (MOBILE FIRST / ADAPTATIVO) ---------------- */
   @media (min-width: 769px) {
     .modal-overlay { align-items: center; }
@@ -235,15 +342,15 @@
 <header>
   <div class="logo">Contas <span>2026</span></div>
   <div class="header-right">
-    <button class="btn" onclick="exportData()">⬇ Exportar</button>
-    <button class="btn btn-accent" onclick="openModal()">＋ Nova Conta</button>
+    <button class="btn" onclick="exportData()"><i class="fas fa-download"></i> Exportar</button>
+    <button class="btn btn-accent" onclick="openModal()"><i class="fas fa-plus"></i> Nova Conta</button>
   </div>
 </header>
 
 <div class="app">
   <aside>
     <div class="sidebar-menu" id="sidebar-months"></div>
-    <button class="month-btn" onclick="showAnnual()" id="btn-annual">📊 Anual</button>
+    <button class="month-btn" onclick="showAnnual()" id="btn-annual"><i class="fas fa-chart-pie" style="margin-right:8px;"></i> Anual</button>
   </aside>
   <main id="main-content"></main>
 </div>
@@ -254,15 +361,24 @@
     <div class="form-row"><label>Descrição</label><input id="f-desc" type="text" autocomplete="off"></div>
     <div class="form-row"><label>Valor (R$)</label><input id="f-valor" type="number" step="0.01"></div>
     <div class="form-row"><label>Vencimento</label><input id="f-venc" type="date"></div>
-    <div class="form-row">
-      <label>Mês</label>
-      <select id="f-mes">
-        <option>JANEIRO</option><option>FEVEREIRO</option><option>MARÇO</option>
-        <option>ABRIL</option><option>MAIO</option><option>JUNHO</option>
-        <option>JULHO</option><option>AGOSTO</option><option>SETEMBRO</option>
-        <option>OUTUBRO</option><option>NOVEMBRO</option><option>DEZEMBRO</option>
-      </select>
+    
+    <div style="display: flex; gap: 10px;">
+        <div class="form-row" style="flex: 1;">
+          <label>Mês Inicial</label>
+          <select id="f-mes">
+            <option>JANEIRO</option><option>FEVEREIRO</option><option>MARÇO</option>
+            <option>ABRIL</option><option>MAIO</option><option>JUNHO</option>
+            <option>JULHO</option><option>AGOSTO</option><option>SETEMBRO</option>
+            <option>OUTUBRO</option><option>NOVEMBRO</option><option>DEZEMBRO</option>
+          </select>
+        </div>
+        
+        <div class="form-row" style="flex: 1;">
+          <label>Parcelas (Meses)</label>
+          <input id="f-parcelas" type="number" min="1" value="1">
+        </div>
     </div>
+
     <div class="form-row">
       <label>Status</label>
       <select id="f-status">
@@ -275,6 +391,40 @@
       <button class="btn btn-accent" onclick="saveItem()">Salvar</button>
     </div>
   </div>
+</div>
+
+<!-- Calculadora Flutuante -->
+<div class="calculator-widget">
+    <button class="calc-btn" onclick="toggleCalc()" title="Calculadora">
+        <i class="fas fa-calculator"></i>
+    </button>
+    <div class="calc-panel" id="calc-panel">
+        <div class="calc-display" id="calc-display">0</div>
+        <div class="calc-grid">
+            <button class="calc-key" onclick="calcInput('C')">C</button>
+            <button class="calc-key" onclick="calcInput('DEL')">⌫</button>
+            <button class="calc-key operator" onclick="calcInput('/')">÷</button>
+            <button class="calc-key operator" onclick="calcInput('*')">×</button>
+            
+            <button class="calc-key" onclick="calcInput('7')">7</button>
+            <button class="calc-key" onclick="calcInput('8')">8</button>
+            <button class="calc-key" onclick="calcInput('9')">9</button>
+            <button class="calc-key operator" onclick="calcInput('-')">-</button>
+            
+            <button class="calc-key" onclick="calcInput('4')">4</button>
+            <button class="calc-key" onclick="calcInput('5')">5</button>
+            <button class="calc-key" onclick="calcInput('6')">6</button>
+            <button class="calc-key operator" onclick="calcInput('+')">+</button>
+            
+            <button class="calc-key" onclick="calcInput('1')">1</button>
+            <button class="calc-key" onclick="calcInput('2')">2</button>
+            <button class="calc-key" onclick="calcInput('3')">3</button>
+            <button class="calc-key equal" style="grid-row: span 2;" onclick="calcInput('=')">=</button>
+            
+            <button class="calc-key" style="grid-column: span 2;" onclick="calcInput('0')">0</button>
+            <button class="calc-key" onclick="calcInput('.')">.</button>
+        </div>
+    </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -383,13 +533,17 @@ function renderMonth(month) {
         <tbody>
           ${sorted.map(c => {
             const st = getStatus(c);
-            const stLabel = st === 'pago' ? '✓ Pago' : st === 'vencido' ? '⚠ Vencido' : '○ Pendente';
+            // Aplicando FontAwesome nos ícones da tabela
+            const stLabel = st === 'pago' ? '<i class="fas fa-check" style="margin-right:4px;"></i> Pago' : 
+                            st === 'vencido' ? '<i class="fas fa-exclamation-triangle" style="margin-right:4px;"></i> Vencido' : 
+                            '<i class="far fa-circle" style="margin-right:4px;"></i> Pendente';
+                            
             return `<tr>
               <td class="td-desc">${c.desc}</td><td><span class="td-date">${fmtDate(c.venc)}</span></td><td class="td-valor">${fmt(c.valor)}</td>
               <td class="td-status"><span class="status ${st}" onclick="toggleStatus('${month}','${c.id}')">${stLabel}</span></td>
               <td class="td-actions">
-                <button class="icon-btn" onclick="openEdit('${month}','${c.id}')">✎</button>
-                <button class="icon-btn del" onclick="deleteItem('${month}','${c.id}')">✕</button>
+                <button class="icon-btn" onclick="openEdit('${month}','${c.id}')"><i class="fas fa-pen"></i></button>
+                <button class="icon-btn del" onclick="deleteItem('${month}','${c.id}')"><i class="fas fa-trash"></i></button>
               </td>
             </tr>`;
           }).join('')}
@@ -403,7 +557,10 @@ function renderMonth(month) {
       ${sorted.length === 0 ? '<div style="text-align:center; padding:20px; color:var(--text3)">Nenhuma conta lançada.</div>' : ''}
       ${sorted.map(c => {
         const st = getStatus(c);
-        const stLabel = st === 'pago' ? '✓ Pago' : st === 'vencido' ? '⚠ Vencido' : '○ Pendente';
+        const stLabel = st === 'pago' ? '<i class="fas fa-check" style="margin-right:4px;"></i> Pago' : 
+                        st === 'vencido' ? '<i class="fas fa-exclamation-triangle" style="margin-right:4px;"></i> Vencido' : 
+                        '<i class="far fa-circle" style="margin-right:4px;"></i> Pendente';
+                        
         return `
           <div class="mobile-card">
             <div class="mobile-card-top">
@@ -416,8 +573,8 @@ function renderMonth(month) {
             <div class="mobile-card-actions">
               <span class="status ${st}" onclick="toggleStatus('${month}','${c.id}')">${stLabel}</span>
               <div>
-                <button class="icon-btn" onclick="openEdit('${month}','${c.id}')" style="padding:6px 10px;">✎ Editar</button>
-                <button class="icon-btn del" onclick="deleteItem('${month}','${c.id}')" style="padding:6px 10px; margin-left:6px;">✕</button>
+                <button class="icon-btn" onclick="openEdit('${month}','${c.id}')" style="padding:6px 10px;"><i class="fas fa-pen"></i></button>
+                <button class="icon-btn del" onclick="deleteItem('${month}','${c.id}')" style="padding:6px 10px; margin-left:6px;"><i class="fas fa-trash"></i></button>
               </div>
             </div>
           </div>`;
@@ -461,21 +618,36 @@ function openModal(month) {
   editingId = null; 
   document.getElementById('modal-title').innerText = "Nova Conta";
   document.getElementById('modal-overlay').classList.add('open');
-  document.getElementById('f-desc').value = ''; document.getElementById('f-valor').value = '';
+  document.getElementById('f-desc').value = ''; 
+  document.getElementById('f-valor').value = '';
   document.getElementById('f-venc').value = '';
   document.getElementById('f-mes').value = month || currentMonth;
   document.getElementById('f-status').value = 'pendente';
+  
+  // Reseta as parcelas e habilita edição
+  const fParcelas = document.getElementById('f-parcelas');
+  fParcelas.value = 1;
+  fParcelas.disabled = false;
+  fParcelas.parentElement.style.opacity = "1";
 }
+
 function openEdit(month, id) {
   const c = window.data[month].contas.find(x=>x.id===id);
   if (!c) return;
   editingId = id; 
   document.getElementById('modal-title').innerText = "Editar Conta";
   document.getElementById('modal-overlay').classList.add('open');
-  document.getElementById('f-desc').value = c.desc; document.getElementById('f-valor').value = c.valor;
+  document.getElementById('f-desc').value = c.desc; 
+  document.getElementById('f-valor').value = c.valor;
   document.getElementById('f-venc').value = c.venc || ''; 
   document.getElementById('f-mes').value = month;
   document.getElementById('f-status').value = c.status || 'pendente';
+  
+  // Desabilita as parcelas na edição (pois já foram geradas)
+  const fParcelas = document.getElementById('f-parcelas');
+  fParcelas.value = 1;
+  fParcelas.disabled = true;
+  fParcelas.parentElement.style.opacity = "0.5";
 }
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 
@@ -485,6 +657,7 @@ function saveItem() {
   const venc = document.getElementById('f-venc').value;
   const mes = document.getElementById('f-mes').value;
   const status = document.getElementById('f-status').value;
+  const parcelas = parseInt(document.getElementById('f-parcelas').value) || 1;
 
   if(!desc) { alert("Por favor, digite uma descrição."); return; }
 
@@ -492,7 +665,37 @@ function saveItem() {
     const c = window.data[mes].contas.find(x=>x.id===editingId);
     if (c) Object.assign(c, {desc, valor, venc, status});
   } else {
-    window.data[mes].contas.push({id:uid(), desc, valor, venc, status});
+    // Lógica para adicionar novas contas em múltiplos meses
+    let mesIndex = MONTHS.indexOf(mes);
+
+    for (let i = 0; i < parcelas; i++) {
+      // Verifica se não ultrapassou o mês de Dezembro do ano atual
+      if (mesIndex + i < MONTHS.length) {
+        let mesDestino = MONTHS[mesIndex + i];
+        
+        // Formata o nome para indicar a parcela (Ex: "Celular (1/3)")
+        let descParcela = parcelas > 1 ? `${desc} (${i + 1}/${parcelas})` : desc;
+        
+        // Avança um mês no vencimento automaticamente
+        let vencParcela = venc;
+        if (venc && i > 0) {
+            let dataVenc = new Date(venc + 'T00:00:00');
+            dataVenc.setMonth(dataVenc.getMonth() + i);
+            vencParcela = dataVenc.toISOString().split('T')[0];
+        }
+
+        // O status das parcelas futuras será sempre "pendente"
+        let statusParcela = (i === 0) ? status : 'pendente';
+
+        window.data[mesDestino].contas.push({
+            id: uid(), 
+            desc: descParcela, 
+            valor, 
+            venc: vencParcela, 
+            status: statusParcela
+        });
+      }
+    }
   }
   save(); closeModal(); render();
 }
@@ -509,6 +712,82 @@ function fmtShort(v) {
   return v.toFixed(0);
 }
 function fmtDate(d) { if(!d) return '—'; const [y,m,dd] = d.split('-'); return `${dd}/${m}/${y}`; }
+
+// LÓGICA DA CALCULADORA
+let calcValue = '0';
+let calcPendingOp = null;
+let calcPrevValue = null;
+let calcWaitingForNewValue = false;
+
+function toggleCalc() {
+    const panel = document.getElementById('calc-panel');
+    panel.classList.toggle('open');
+}
+
+function updateCalcDisplay() {
+    document.getElementById('calc-display').innerText = calcValue;
+}
+
+function calcInput(val) {
+    if (val === 'C') {
+        calcValue = '0';
+        calcPendingOp = null;
+        calcPrevValue = null;
+    } else if (val === 'DEL') {
+        if (calcValue.length > 1) {
+            calcValue = calcValue.slice(0, -1);
+        } else {
+            calcValue = '0';
+        }
+    } else if (['+', '-', '*', '/'].includes(val)) {
+        if (calcPendingOp && !calcWaitingForNewValue) {
+            calcExecute();
+        }
+        calcPrevValue = parseFloat(calcValue);
+        calcPendingOp = val;
+        calcWaitingForNewValue = true;
+    } else if (val === '=') {
+        if (calcPendingOp) {
+            calcExecute();
+            calcPendingOp = null;
+        }
+    } else {
+        // Números e ponto
+        if (calcWaitingForNewValue) {
+            calcValue = val === '.' ? '0.' : val;
+            calcWaitingForNewValue = false;
+        } else {
+            if (val === '.' && calcValue.includes('.')) return;
+            calcValue = calcValue === '0' && val !== '.' ? val : calcValue + val;
+        }
+    }
+    updateCalcDisplay();
+}
+
+function calcExecute() {
+    const curr = parseFloat(calcValue);
+    let res = 0;
+    switch(calcPendingOp) {
+        case '+': res = calcPrevValue + curr; break;
+        case '-': res = calcPrevValue - curr; break;
+        case '*': res = calcPrevValue * curr; break;
+        case '/': res = curr !== 0 ? calcPrevValue / curr : 0; break;
+    }
+    calcValue = res.toString();
+    // Limita casas decimais para não quebrar o layout
+    if(calcValue.includes('.') && calcValue.split('.')[1].length > 4) {
+        calcValue = res.toFixed(4).replace(/\.?0+$/, '');
+    }
+}
+
+// Fechar calculadora se clicar fora
+document.addEventListener('click', function(e) {
+    const widget = document.querySelector('.calculator-widget');
+    const panel = document.getElementById('calc-panel');
+    if (widget && !widget.contains(e.target) && panel.classList.contains('open')) {
+        panel.classList.remove('open');
+    }
+});
 
 render();
 </script>
