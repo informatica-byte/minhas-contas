@@ -327,6 +327,57 @@
       background: var(--accent2);
   }
 
+  [hidden] { display: none !important; }
+  .protected-area { visibility: hidden; pointer-events: none; }
+  body.authenticated .protected-area { visibility: visible; pointer-events: auto; }
+  body.authenticated .auth-gate { display: none; }
+
+  .auth-gate {
+    position: fixed; inset: 0; z-index: 20000; overflow-y: auto;
+    display: grid; place-items: center; padding: 28px 18px;
+    background:
+      radial-gradient(circle at 15% 15%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 34%),
+      radial-gradient(circle at 85% 80%, color-mix(in srgb, var(--blue) 12%, transparent), transparent 32%),
+      var(--bg);
+  }
+  .auth-shell { width: min(920px, 100%); display: grid; grid-template-columns: 1.05fr .95fr; border: 1px solid var(--border); border-radius: 24px; overflow: hidden; background: var(--surface); box-shadow: var(--shadow); }
+  .auth-brand { padding: 54px; display: flex; flex-direction: column; justify-content: space-between; min-height: 570px; background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 14%, var(--surface)), var(--surface)); border-right: 1px solid var(--border); }
+  .auth-logo { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--accent); }
+  .auth-logo span { color: var(--text2); font: 500 12px 'DM Sans', sans-serif; letter-spacing: 1.6px; text-transform: uppercase; margin-left: 8px; }
+  .auth-copy h1 { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(34px, 5vw, 52px); line-height: 1.04; margin-bottom: 18px; max-width: 450px; }
+  .auth-copy h1 span { color: var(--accent); }
+  .auth-copy p { color: var(--text2); font-size: 15px; line-height: 1.65; max-width: 410px; }
+  .auth-benefits { display: flex; flex-wrap: wrap; gap: 8px; }
+  .auth-benefit { display: inline-flex; align-items: center; gap: 7px; font-size: 11px; color: var(--text2); border: 1px solid var(--border); border-radius: 999px; padding: 7px 10px; background: color-mix(in srgb, var(--surface) 76%, transparent); }
+  .auth-benefit i { color: var(--green); }
+  .auth-card { padding: 48px 42px; display: flex; flex-direction: column; justify-content: center; }
+  .auth-card h2 { font-family: 'DM Serif Display', serif; font-size: 29px; font-weight: 400; margin-bottom: 8px; }
+  .auth-subtitle { color: var(--text2); line-height: 1.5; margin-bottom: 28px; }
+  .auth-field { margin-bottom: 16px; }
+  .auth-field label { display: block; color: var(--text2); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 7px; }
+  .auth-input-wrap { position: relative; }
+  .auth-input-wrap > i { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text3); }
+  .auth-input { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; color: var(--text); padding: 13px 42px 13px 40px; outline: none; }
+  .auth-input:focus { border-color: var(--accent); }
+  .password-toggle { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; background: transparent; color: var(--text2); cursor: pointer; border-radius: 7px; }
+  .password-toggle:hover { color: var(--accent); background: var(--border); }
+  .auth-primary { width: 100%; justify-content: center; padding: 13px 16px; margin-top: 4px; }
+  .auth-links { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; color: var(--text2); font-size: 12px; }
+  .link-button { border: 0; background: transparent; color: var(--accent); cursor: pointer; padding: 3px 0; font-weight: 700; }
+  .link-button:hover { text-decoration: underline; }
+  .auth-message { min-height: 20px; margin: -4px 0 10px; font-size: 12px; line-height: 1.45; color: var(--text2); }
+  .auth-message.error { color: var(--red); }
+  .auth-message.success { color: var(--green); }
+  .auth-security { display: flex; align-items: flex-start; gap: 9px; color: var(--text3); font-size: 10px; line-height: 1.45; margin-top: 28px; }
+  .auth-loading { display: grid; place-items: center; gap: 14px; min-height: 250px; color: var(--text2); text-align: center; }
+  .auth-spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--accent); animation: authSpin .8s linear infinite; }
+  @keyframes authSpin { to { transform: rotate(360deg); } }
+  .user-pill { display: inline-flex; align-items: center; gap: 8px; max-width: 210px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 999px; color: var(--text2); font-size: 11px; }
+  .user-pill i { color: var(--accent); }
+  .user-email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .logout-btn { border: 0; border-left: 1px solid var(--border); background: transparent; color: var(--text2); cursor: pointer; padding-left: 9px; }
+  .logout-btn:hover { color: var(--red); }
+
   /* ---------------- QUERIES DE RESPONSIVIDADE (MOBILE FIRST / ADAPTATIVO) ---------------- */
   @media (min-width: 769px) {
     .modal-overlay { align-items: center; }
@@ -335,6 +386,13 @@
   }
 
   @media (max-width: 768px) {
+    .auth-gate { padding: 0; place-items: stretch; }
+    .auth-shell { grid-template-columns: 1fr; min-height: 100%; border: 0; border-radius: 0; }
+    .auth-brand { min-height: auto; padding: 28px 24px 26px; gap: 42px; border-right: 0; border-bottom: 1px solid var(--border); }
+    .auth-copy h1 { font-size: 34px; }
+    .auth-copy p { font-size: 13px; }
+    .auth-benefits { display: none; }
+    .auth-card { padding: 32px 24px 42px; }
     header { height: auto; padding: 12px 16px; flex-direction: column; gap: 12px; align-items: flex-start; }
     .header-right { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
     .header-right .btn { justify-content: center; padding: 8px 10px; font-size: 12px; }
@@ -378,6 +436,8 @@
   }
 
   @media (max-width: 480px) {
+    .user-pill { order: 5; max-width: 100%; }
+    .user-email { max-width: 150px; }
     .btn-secondary .btn-label { display: none; }
     .btn-secondary { width: 38px; height: 38px; padding: 0; }
     .sync-text { display: none; }
@@ -392,21 +452,138 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+  import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+  import {
+    getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+    sendPasswordResetEmail, signOut, setPersistence, browserLocalPersistence
+  } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
 
   const firebaseConfig = {
-    databaseURL: "https://contas-2026-43a86-default-rtdb.firebaseio.com/",
+    apiKey: "AIzaSyDXjmrPAezRFlVQprWbFNy-7qqKlSgpetw",
+    authDomain: "contas-2026-43a86.firebaseapp.com",
+    databaseURL: "https://contas-2026-43a86-default-rtdb.firebaseio.com",
+    projectId: "contas-2026-43a86",
+    storageBucket: "contas-2026-43a86.firebasestorage.app",
+    messagingSenderId: "773308308167",
+    appId: "1:773308308167:web:a0cb1561e21a33f994bce2"
   };
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-  const dbRef = ref(db, 'dados_financeiros');
+  const auth = getAuth(app);
   const connectedRef = ref(db, '.info/connected');
+  let activeDataRef = null;
+  let unsubscribeData = null;
+  let authMode = 'login';
+
+  const authMessages = {
+    'auth/invalid-credential': 'E-mail ou senha incorretos.',
+    'auth/user-not-found': 'E-mail ou senha incorretos.',
+    'auth/wrong-password': 'E-mail ou senha incorretos.',
+    'auth/invalid-email': 'Digite um endereço de e-mail válido.',
+    'auth/email-already-in-use': 'Este e-mail já possui uma conta.',
+    'auth/weak-password': 'Use uma senha com pelo menos 6 caracteres.',
+    'auth/missing-password': 'Digite sua senha.',
+    'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos e tente novamente.',
+    'auth/network-request-failed': 'Não foi possível conectar. Verifique sua internet.',
+    'auth/operation-not-allowed': 'Ative o provedor E-mail/senha no Firebase Authentication.',
+    'auth/unauthorized-domain': 'Este endereço ainda não está autorizado no Firebase.'
+  };
+
+  function setAuthMessage(message = '', type = '') {
+    const element = document.getElementById('auth-message');
+    element.textContent = message;
+    element.className = `auth-message ${type}`;
+  }
+
+  function setAuthBusy(busy) {
+    const button = document.getElementById('auth-submit');
+    button.disabled = busy;
+    button.innerHTML = busy
+      ? '<i class="fas fa-circle-notch fa-spin"></i> Aguarde…'
+      : `<i class="fas ${authMode === 'register' ? 'fa-user-plus' : 'fa-right-to-bracket'}"></i> ${authMode === 'register' ? 'Criar meu acesso' : 'Entrar'}`;
+  }
+
+  window.setAuthMode = function(mode) {
+    authMode = mode === 'register' ? 'register' : 'login';
+    const registering = authMode === 'register';
+    document.getElementById('auth-title').textContent = registering ? 'Crie seu acesso' : 'Bem-vindo de volta';
+    document.getElementById('auth-subtitle').textContent = registering ? 'Use seu e-mail e escolha uma senha segura.' : 'Entre para acessar suas contas com segurança.';
+    document.getElementById('auth-confirm-row').hidden = !registering;
+    document.getElementById('auth-forgot').hidden = registering;
+    document.getElementById('auth-toggle-question').textContent = registering ? 'Já possui acesso?' : 'Primeiro acesso?';
+    document.getElementById('auth-toggle').textContent = registering ? 'Entrar' : 'Criar acesso';
+    document.getElementById('auth-password').autocomplete = registering ? 'new-password' : 'current-password';
+    setAuthMessage();
+    setAuthBusy(false);
+  };
+
+  window.toggleAuthMode = function() {
+    window.setAuthMode(authMode === 'login' ? 'register' : 'login');
+  };
+
+  window.togglePasswordVisibility = function(inputId, button) {
+    const input = document.getElementById(inputId);
+    const showing = input.type === 'text';
+    input.type = showing ? 'password' : 'text';
+    button.innerHTML = `<i class="fas ${showing ? 'fa-eye' : 'fa-eye-slash'}"></i>`;
+    button.setAttribute('aria-label', showing ? 'Mostrar senha' : 'Ocultar senha');
+  };
+
+  window.handleAuthSubmit = async function(event) {
+    event.preventDefault();
+    const email = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-password').value;
+    const confirmation = document.getElementById('auth-confirm').value;
+    setAuthMessage();
+
+    if (!email || !password) return setAuthMessage('Preencha o e-mail e a senha.', 'error');
+    if (password.length < 6) return setAuthMessage('A senha precisa ter pelo menos 6 caracteres.', 'error');
+    if (authMode === 'register' && password !== confirmation) return setAuthMessage('As senhas não coincidem.', 'error');
+
+    setAuthBusy(true);
+    try {
+      if (authMode === 'register') {
+        await createUserWithEmailAndPassword(auth, email, password);
+        window.showToast?.('Acesso criado com sucesso.');
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+      }
+    } catch (error) {
+      console.error('Falha na autenticação:', error);
+      setAuthMessage(authMessages[error.code] || 'Não foi possível concluir. Tente novamente.', 'error');
+      setAuthBusy(false);
+    }
+  };
+
+  window.resetPassword = async function() {
+    const email = document.getElementById('auth-email').value.trim();
+    if (!email) {
+      setAuthMessage('Digite seu e-mail para receber a recuperação.', 'error');
+      document.getElementById('auth-email').focus();
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setAuthMessage('Enviamos um link de recuperação para seu e-mail.', 'success');
+    } catch (error) {
+      setAuthMessage(authMessages[error.code] || 'Não foi possível enviar a recuperação.', 'error');
+    }
+  };
+
+  window.logout = async function() {
+    try { await signOut(auth); }
+    catch (error) { window.showToast?.('Não foi possível sair agora.'); }
+  };
 
   window.saveToCloud = async function(dados) {
+    if (!auth.currentUser || !activeDataRef) {
+      window.setSyncState?.('error', 'Salvo neste dispositivo');
+      return;
+    }
     window.setSyncState?.('saving', 'Salvando…');
     try {
-      await set(dbRef, dados);
+      await set(activeDataRef, dados);
       window.setSyncState?.('online', 'Sincronizado');
     } catch (error) {
       console.error('Falha ao sincronizar:', error);
@@ -417,29 +594,146 @@
   };
 
   onValue(connectedRef, (snapshot) => {
-    window.setSyncState?.(snapshot.val() ? 'online' : 'error', snapshot.val() ? 'Sincronizado' : 'Modo local');
+    if (auth.currentUser) window.setSyncState?.(snapshot.val() ? 'online' : 'error', snapshot.val() ? 'Sincronizado' : 'Modo local');
   });
 
-  onValue(dbRef, (snapshot) => {
-    const cloudData = snapshot.val();
-    if (cloudData) {
-      window.data = window.normalizeData(cloudData);
-      localStorage.setItem('contas2026', JSON.stringify(window.data));
+  async function loadUserData(user) {
+    window.currentUserId = user.uid;
+    activeDataRef = ref(db, `usuarios/${user.uid}/dados_financeiros`);
+    const userStorageKey = `contas2026:${user.uid}`;
+    let selectedData = null;
+
+    try {
+      const snapshot = await get(activeDataRef);
+      if (snapshot.exists()) selectedData = snapshot.val();
+    } catch (error) {
+      console.warn('Dados privados ainda não disponíveis na nuvem:', error);
+    }
+
+    if (!selectedData) {
+      try { selectedData = JSON.parse(localStorage.getItem(userStorageKey)); } catch (_) {}
+    }
+    if (!selectedData) {
+      const migrationOwner = localStorage.getItem('contas2026:migration-owner');
+      if (!migrationOwner || migrationOwner === user.uid) {
+        try { selectedData = JSON.parse(localStorage.getItem('contas2026')); } catch (_) {}
+        localStorage.setItem('contas2026:migration-owner', user.uid);
+      }
+    }
+
+    window.data = window.normalizeData(selectedData || {});
+    localStorage.setItem(userStorageKey, JSON.stringify(window.data));
+    window.render();
+
+    try {
+      const snapshot = await get(activeDataRef);
+      if (!snapshot.exists()) await set(activeDataRef, window.data);
+    } catch (error) {
+      console.warn('Os dados seguem disponíveis localmente até as regras serem configuradas.', error);
+      window.setSyncState?.('error', 'Salvo neste dispositivo');
+    }
+
+    unsubscribeData?.();
+    unsubscribeData = onValue(activeDataRef, (snapshot) => {
+      if (!snapshot.exists()) return;
+      window.data = window.normalizeData(snapshot.val());
+      localStorage.setItem(userStorageKey, JSON.stringify(window.data));
       window.render();
       window.setSyncState?.('online', 'Sincronizado');
-    }
-  }, (error) => {
-    console.error('Falha ao carregar dados da nuvem:', error);
-    window.setSyncState?.('error', 'Modo local');
+    }, (error) => {
+      console.error('Falha ao carregar os dados do usuário:', error);
+      window.setSyncState?.('error', 'Modo local');
+    });
+
+    window.handleSignedIn(user);
+  }
+
+  setPersistence(auth, browserLocalPersistence).catch(error => console.warn('Persistência de sessão indisponível:', error)).finally(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try { await loadUserData(user); }
+        catch (error) {
+          console.error('Falha ao preparar a conta:', error);
+          setAuthMessage('Não foi possível preparar seus dados. Tente entrar novamente.', 'error');
+          window.showAuthForm();
+        }
+      } else {
+        unsubscribeData?.();
+        unsubscribeData = null;
+        activeDataRef = null;
+        window.currentUserId = null;
+        window.handleSignedOut();
+      }
+    });
   });
 </script>
 </head>
 <body>
 
-<header>
+<section class="auth-gate" id="auth-gate" aria-label="Acesso ao Contas 2026">
+  <div class="auth-shell">
+    <div class="auth-brand">
+      <div class="auth-logo">Contas <span>2026</span></div>
+      <div class="auth-copy">
+        <h1>Suas contas,<br><span>só suas.</span></h1>
+        <p>Acompanhe vencimentos, pagamentos e seu saldo em um espaço pessoal, sincronizado e protegido pelo seu acesso.</p>
+      </div>
+      <div class="auth-benefits" aria-label="Benefícios">
+        <span class="auth-benefit"><i class="fas fa-lock"></i> Acesso protegido</span>
+        <span class="auth-benefit"><i class="fas fa-cloud"></i> Sincronização</span>
+        <span class="auth-benefit"><i class="fas fa-user-shield"></i> Dados separados</span>
+      </div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-loading" id="auth-loading">
+        <span class="auth-spinner" aria-hidden="true"></span>
+        <span>Verificando seu acesso…</span>
+      </div>
+      <form id="auth-form" hidden onsubmit="handleAuthSubmit(event)">
+        <h2 id="auth-title">Bem-vindo de volta</h2>
+        <p class="auth-subtitle" id="auth-subtitle">Entre para acessar suas contas com segurança.</p>
+
+        <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
+        <div class="auth-field">
+          <label for="auth-email">E-mail</label>
+          <div class="auth-input-wrap">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            <input class="auth-input" id="auth-email" type="email" inputmode="email" autocomplete="email" placeholder="voce@exemplo.com" required>
+          </div>
+        </div>
+        <div class="auth-field">
+          <label for="auth-password">Senha</label>
+          <div class="auth-input-wrap">
+            <i class="fas fa-key" aria-hidden="true"></i>
+            <input class="auth-input" id="auth-password" type="password" minlength="6" autocomplete="current-password" placeholder="Mínimo de 6 caracteres" required>
+            <button class="password-toggle" type="button" onclick="togglePasswordVisibility('auth-password', this)" aria-label="Mostrar senha"><i class="fas fa-eye"></i></button>
+          </div>
+        </div>
+        <div class="auth-field" id="auth-confirm-row" hidden>
+          <label for="auth-confirm">Confirme a senha</label>
+          <div class="auth-input-wrap">
+            <i class="fas fa-shield-halved" aria-hidden="true"></i>
+            <input class="auth-input" id="auth-confirm" type="password" minlength="6" autocomplete="new-password" placeholder="Digite a senha novamente">
+            <button class="password-toggle" type="button" onclick="togglePasswordVisibility('auth-confirm', this)" aria-label="Mostrar senha"><i class="fas fa-eye"></i></button>
+          </div>
+        </div>
+
+        <button class="btn btn-accent auth-primary" id="auth-submit" type="submit"><i class="fas fa-right-to-bracket"></i> Entrar</button>
+        <div class="auth-links">
+          <button class="link-button" id="auth-forgot" type="button" onclick="resetPassword()">Esqueci minha senha</button>
+          <span><span id="auth-toggle-question">Primeiro acesso?</span> <button class="link-button" id="auth-toggle" type="button" onclick="toggleAuthMode()">Criar acesso</button></span>
+        </div>
+        <p class="auth-security"><i class="fas fa-shield-halved" aria-hidden="true"></i><span>Sua senha é processada pelo Firebase Authentication e não fica gravada neste arquivo.</span></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<header class="protected-area">
   <div class="logo">Contas <span>2026 · seu painel financeiro</span></div>
   <div class="header-right">
     <div class="sync-pill" id="sync-pill" title="Estado da sincronização"><span class="sync-dot"></span><span class="sync-text" id="sync-text">Conectando…</span></div>
+    <div class="user-pill" title="Conta conectada"><i class="fas fa-circle-user"></i><span class="user-email" id="user-email"></span><button class="logout-btn" type="button" onclick="logout()" aria-label="Sair da conta" title="Sair"><i class="fas fa-right-from-bracket"></i></button></div>
     <button class="btn btn-icon" type="button" onclick="toggleTheme()" id="theme-button" aria-label="Alternar tema" title="Alternar tema"><i class="fas fa-sun" id="theme-icon"></i></button>
     <button class="btn btn-secondary" type="button" onclick="document.getElementById('import-file').click()"><i class="fas fa-upload"></i> <span class="btn-label">Importar</span></button>
     <input class="sr-only" id="import-file" type="file" accept="application/json,.json" onchange="importData(event)">
@@ -448,7 +742,7 @@
   </div>
 </header>
 
-<div class="app">
+<div class="app protected-area">
   <aside>
     <div class="sidebar-menu" id="sidebar-months"></div>
     <button class="month-btn" type="button" onclick="showAnnual()" id="btn-annual"><i class="fas fa-chart-pie" style="margin-right:8px;"></i> Anual</button>
@@ -456,7 +750,7 @@
   <main id="main-content"></main>
 </div>
 
-<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this) closeModal()" aria-hidden="true">
+<div class="modal-overlay protected-area" id="modal-overlay" onclick="if(event.target===this) closeModal()" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <h2 id="modal-title">Nova Conta</h2>
     <div class="form-row"><label for="f-desc">Descrição</label><input id="f-desc" type="text" autocomplete="off" maxlength="80" required></div>
@@ -495,7 +789,7 @@
 </div>
 
 <!-- Calculadora Flutuante -->
-<div class="calculator-widget">
+<div class="calculator-widget protected-area">
     <button class="calc-btn" type="button" onclick="toggleCalc()" title="Calculadora" aria-label="Abrir calculadora" aria-expanded="false" aria-controls="calc-panel">
         <i class="fas fa-calculator"></i>
     </button>
@@ -562,6 +856,7 @@ try {
   console.warn('Backup local inválido; iniciando uma base vazia.', error);
 }
 window.data = window.normalizeData(localData);
+window.currentUserId = null;
 
 let currentMonth = new Date().getFullYear() === APP_YEAR ? MONTHS[new Date().getMonth()] : MONTHS[0];
 let viewMode = 'month';
@@ -573,7 +868,8 @@ let toastTimer = null;
 let modalTrigger = null;
 
 function save() {
-  localStorage.setItem('contas2026', JSON.stringify(window.data));
+  const storageKey = window.currentUserId ? `contas2026:${window.currentUserId}` : 'contas2026';
+  localStorage.setItem(storageKey, JSON.stringify(window.data));
   if (window.saveToCloud) window.saveToCloud(window.data).catch(() => {});
   else setSyncState('error', 'Salvo localmente');
 }
@@ -594,7 +890,33 @@ window.showToast = function(message) {
   toast.textContent = message;
   toast.classList.add('show');
   toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
-}
+};
+
+window.showAuthForm = function() {
+  document.body.classList.remove('authenticated');
+  const gate = document.getElementById('auth-gate');
+  gate.setAttribute('aria-hidden', 'false');
+  document.getElementById('auth-loading').hidden = true;
+  document.getElementById('auth-form').hidden = false;
+  window.setAuthMode?.('login');
+  requestAnimationFrame(() => document.getElementById('auth-email').focus());
+};
+
+window.handleSignedOut = function() {
+  document.getElementById('auth-password').value = '';
+  document.getElementById('auth-confirm').value = '';
+  window.showAuthForm();
+};
+
+window.handleSignedIn = function(user) {
+  document.getElementById('user-email').textContent = user.email || 'Conta conectada';
+  document.getElementById('auth-email').value = user.email || '';
+  document.getElementById('auth-password').value = '';
+  document.getElementById('auth-confirm').value = '';
+  document.getElementById('auth-gate').setAttribute('aria-hidden', 'true');
+  document.body.classList.add('authenticated');
+  window.setSyncState?.('online', 'Sincronizado');
+};
 
 function totals(month) {
   const d = window.data[month] || { renda:0, contas:[] };
